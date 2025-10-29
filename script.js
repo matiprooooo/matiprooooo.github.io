@@ -45,32 +45,34 @@ const THEMES = {
     'Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla',
     'Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo'
   ],
+  
   'Personas': [
-    "EMI","Nachito(AYO)","SOLIS","EBERTZ","CABALLITO","SHOSHI","AGUSTINA","FRANCISCO","MARTIN","POLLO",
-    "BAHIANO","NICOLAU","NAHUE(EL MAMUEL)","JOACO DE PIEDRAS BLANCAS","LA COQUETA","BRANDON","LA ANA",
-    "FRASQUITO","AXEL(ÑAÑITO)","IBAI","EL MOMO","CRISTINA","CHIQUI TAPIA","DAVO","LA COBRA","GASTON EDUL",
-    "EL IVAN","LA YANI","LA SEÑO PAO(INGLES)","HEBER ZAPATA","BAULETTI","MERNUEL","BAULETTI",
-    "MATIAS BOTTERO","MILICA","XOCAS","COSCU","JULY3P","NICKI NICOLE","PELAOKEH","PEQUEÑO J","BANANIROU","BANANERO",
-    "CATALDO","WANDA NARA","MARTINCITO","JULIO","ROBLEIS","PEDRITOVM","ELDEMENTE","BOFFEGP","MILEI","ALONSO","LALOCOMOTORA",
-    "TOMAS MAZZA","RICARDO FORT","NORDELTUS","ELOPODCAST","ADAM SANDLER","HUGUITO ZAPATA","COLAPINTO","WILL(FUTBOLITOS)","DUKI",
-    "ZEKO","TRUENO","WOS","LA CHABONA","COFLA","MIRTHA LEGRAND","COCKER","LOS DISCIPLENTES","PACHECO CARAFLOJA","MIKECRACK","FEDE VIGEVIANI",
-     "FERNANFLOO","GERMAN GARMENDIA","VEGETTA777","WILLYREX","MARIANO CLOOS","CAMNAIR","LUZU","OLGA","MOCHA","FALUCHO","SHONGUI(VERSION MALVADA DEL SHOSHI)","YAO CABRERA","TOMAS HOLDER"
+    'EMI','Nachito (AYO)','SOLIS','EBERTZ','CABALLITO','SHOSHI','AGUSTINA','FRANCISCO','MARTIN','POLLO',
+    'BAHIANO','NICOLAU','NAHUE (EL MAMUEL)','JOACO DE PIEDRAS BLANCAS','LA COQUETA','BRANDON','LA ANA',
+    'FRASQUITO','AXEL (ÑAÑITO)','IBAI','EL MOMO','CRISTINA','CHIQUI TAPIA','DAVO','LA COBRA','GASTON EDUL',
+    'EL IVAN','LA YANI','LA SEÑO PAO (INGLES)','HEBER ZAPATA','BAULETTI','MERNUEL',
+    'MATIAS BOTTERO','MILICA','XOCAS','COSCU','JULY3P','NICKI NICOLE','PELAOKEH','PEQUEÑO J','BANANIROU','BANANERO',
+    'CATALDO','WANDA NARA','MARTINCITO','JULIO','ROBLEIS','PEDRITOVM','ELDEMENTE','BOFFEGP','MILEI','ALONSO','LA LOCOMOTORA',
+    'TOMAS MAZZA','RICARDO FORT','NORDELTUS','ELO PODCAST','ADAM SANDLER','HUGUITO ZAPATA','COLAPINTO','WILL (FUTBOLITOS)','DUKI',
+    'ZEKO','TRUENO','WOS','LA CHABONA','COFLA','MIRTHA LEGRAND','COCKER','LOS DISCIPLENTES','PACHECO CARAFLOJA','MIKECRACK','FEDE VIGEVIANI',
+    'FERNANFLOO','GERMAN GARMENDIA','VEGETTA777','WILLYREX','MARIANO CLOOS','CAMNAIR','LUZU','OLGA','MOCHA','FALUCHO','SHONGUI (VERSION MALVADA DEL SHOSHI)','YAO CABRERA','TOMAS HOLDER'
   ],
+  
   'Futbolistas': [
     'Lionel Messi','Cristiano Ronaldo','Neymar','Kylian Mbappé','Erling Haaland','Kevin De Bruyne','Luka Modrić','Ángel Di María','Julián Álvarez','Paulo Dybala',
     'Sergio Agüero','Ronaldinho','Zinedine Zidane','Andrés Iniesta','Xavi','Diego Maradona','Pelé','Francesco Totti','Didier Drogba','Wayne Rooney'
   ],
 
-  "Cartas de clash royale": [
-  'Gigante','Montapuercos','Mago','Horda de esbirros','Valquiria','P.E.K.K.A','Tronco','Bebé dragón','Megacaballero','Bruja',
-  'Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Furia',
-  'Reina arquera','Cazador','Barbaros','Barril de esqueletos','Mini P.E.K.K.A','Dragón infernal','Ejército de esqueletos','Lanzarrocas','Cementerio','Duendes',
-  'Duendes con lanza','Choza de duendes','Cañón','Torre bombardera','Torre infernal','Bola de fuego','Tornado','Zap','Furia','Espíritu de hielo',
-  'Espíritu de fuego','Espíritu eléctrico','Hielo','Curación','Clon','lapida','Torre inferno','Mortero','Tesla','Caballero oscuro',
-  'Sabueso de lava','Gran minero','Ballesta','Puercos reales','Recolector de elixir','Pocion veneno','Reclutas reales','Cohete','Lanzafuegos'
-]
-   
+  'Cartas de Clash Royale': [
+    'Gigante','Montapuercos','Mago','Horda de esbirros','Valquiria','P.E.K.K.A','Tronco','Bebé dragón','Megacaballero','Bruja',
+    'Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Furia',
+    'Reina arquera','Cazador','Bárbaros','Barril de esqueletos','Mini P.E.K.K.A','Dragón infernal','Ejército de esqueletos','Lanzarrocas','Cementerio','Duendes',
+    'Duendes con lanza','Choza de duendes','Cañón','Torre bombardera','Torre infernal','Bola de fuego','Tornado','Zap','Espíritu de hielo',
+    'Espíritu de fuego','Espíritu eléctrico','Hielo','Curación','Clon','Lápida','Mortero','Tesla','Caballero oscuro',
+    'Sabueso de lava','Gran minero','Ballesta','Puercos reales','Recolector de elixir','Poción veneno','Reclutas reales','Cohete','Lanzafuegos'
+  ]
 };
+
 
 
 
@@ -350,6 +352,7 @@ document.addEventListener('keydown', (e) => {
     impostorSfx.src = 'impostor-pulse.mp3';
   Then the in-app 🔊 toggle will play/pause ambient music.
 */
+
 
 
 
