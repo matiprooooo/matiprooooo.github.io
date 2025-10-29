@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IMPOSTOR — Neon Game</title>
+  <!-- Orbitron font (no framework, just a font) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- Animated particles background -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+  <!-- Cursor glow -->
+  <div id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- Ambient audio (loop) -->
+  <audio id="ambientAudio" loop preload="auto">
+    <source src="" type="audio/mp3">
+    <!-- Tip: you can set a local MP3 file path above or leave empty for silence -->
+  </audio>
+
+  <!-- Impostor pulse SFX -->
+  <audio id="impostorSfx" preload="auto">
+    <source src="" type="audio/mp3">
+    <!-- Tip: set a short pulse/beep file path above if desired -->
+  </audio>
+
+  <!-- Main container -->
+  <div class="app-wrap">
+    <!-- Home screen -->
+    <section id="screenHome" class="screen active">
+      <div class="card">
+        <h1 class="title neon-title">IMPOSTOR</h1>
+
+        <div class="controls">
+          <button id="btnPlay" class="btn primary">Jugar</button>
+          <button id="btnTheme" class="btn">Tema</button>
+          <button id="btnPlayers" class="btn">Jugadores</button>
+        </div>
+
+        <div class="preview-wrap">
+          <div class="preview-header">
+            <span class="label">Vista previa del tema:</span>
+            <span id="previewThemeName" class="theme-name">Cosas</span>
+          </div>
+          <ul id="previewList" class="preview-list">
+            <!-- Filled by JS with 5 items -->
+          </ul>
+        </div>
+
+        <div class="audio-toggle">
+          <button id="btnAudio" class="icon-btn" aria-label="Toggle audio" title="Música ambiental">
+            🔊
+          </button>
+          <span id="audioStatus" class="audio-status">Silencio</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Game screen -->
+    <section id="screenGame" class="screen">
+      <div class="card">
+        <div class="hud">
+          <div class="hud-item">
+            <span class="hud-label">Turno:</span>
+            <span id="turnInfo" class="hud-value">Jugador 1 de 4</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">Tema:</span>
+            <span id="hudTheme" class="hud-value">Cosas</span>
+          </div>
+        </div>
+
+        <div class="word-area">
+          <div id="wordDisplay" class="word-display">—</div>
+          <div id="impostorBadge" class="impostor-badge">IMPOSTOR</div>
+        </div>
+
+        <div class="actions">
+          <button id="btnEndTurn" class="btn primary">Terminar turno</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transition overlay -->
+    <div id="overlayTransition" class="overlay">
+      <div class="overlay-card">
+        <p class="overlay-text">Pasa el dispositivo al siguiente jugador</p>
+        <button id="btnNextRound" class="btn primary">Avanzar ronda</button>
+      </div>
+    </div>
+
+    <!-- Final screen -->
+    <section id="screenFinal" class="screen">
+      <div class="card">
+        <h2 class="final-title neon-title">Todos han visto su palabra</h2>
+        <div class="actions">
+          <button id="btnNewGame" class="btn primary">Nueva partida</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Theme modal -->
+  <div id="modalTheme" class="modal" role="dialog" aria-modal="true" aria-label="Elegir tema">
+    <div class="modal-card">
+      <h3 class="modal-title">Elegí un tema</h3>
+      <div class="modal-grid">
+        <button class="btn pill" data-theme="Cosas">Cosas</button>
+        <button class="btn pill" data-theme="Personas">Personas</button>
+        <button class="btn pill" data-theme="Futbolistas">Futbolistas</button>
+        <button class="btn pill" data-theme="Cartas de Clash Royale">Cartas de Clash Royale</button>
+      </div>
+      <button class="btn" id="closeTheme">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Players modal -->
+  <div id="modalPlayers" class="modal" role="dialog" aria-modal="true" aria-label="Elegir jugadores">
+    <div class="modal-card">
+      <h3 class="modal-title">Cantidad de jugadores</h3>
+      <div class="modal-grid">
+        <!-- 2 to 8 circular buttons -->
+        <button class="btn circle" data-count="2">2</button>
+        <button class="btn circle" data-count="3">3</button>
+        <button class="btn circle" data-count="4">4</button>
+        <button class="btn circle" data-count="5">5</button>
+        <button class="btn circle" data-count="6">6</button>
+        <button class="btn circle" data-count="7">7</button>
+        <button class="btn circle" data-count="8">8</button>
+      </div>
+      <button class="btn" id="closePlayers">Cerrar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
