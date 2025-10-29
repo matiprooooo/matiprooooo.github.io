@@ -46,7 +46,12 @@ const THEMES = {
     'Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo'
   ],
   'Personas': [
-    "EMI", "Nachito(AYO)", "SOLIS", "EBERTZ", "CABALLITO", "SHOSHI", "AGUSTINA", "FRANCISCO", "MARTIN", "POLLO", "BAHIANO", "NICOLAU", "NAHUE(EL MAMUEL)", "JOACO DE PIEDRAS BLANCAS", "LA COQUETA", "BRANDON", "LA ANA", "FRASQUITO", "AXEL(ÑAÑITO)", "IBAI", "EL MOMO", "CRISTINA", "CHIQUI TAPIA", "DAVO", "LA COBRA", "GASTON EDUL", "EL IVAN", "LA YANI", "LA SEÑO PAU(INGLES)", "HEBER ZAPATA", "BAULETTI", "MERNUEL", "BAULETTI", "MATIAS BOTTERO", "MILICA"],
+    "EMI", "Nachito(AYO)", "SOLIS", "EBERTZ", "CABALLITO", "SHOSHI", "AGUSTINA", "FRANCISCO", "MARTIN", "POLLO",
+    "BAHIANO", "NICOLAU", "NAHUE(EL MAMUEL)", "JOACO DE PIEDRAS BLANCAS", "LA COQUETA", "BRANDON", "LA ANA",
+    "FRASQUITO", "AXEL(ÑAÑITO)", "IBAI", "EL MOMO", "CRISTINA", "CHIQUI TAPIA", "DAVO", "LA COBRA", "GASTON EDUL",
+    "EL IVAN", "LA YANI", "LA SEÑO PAU(INGLES)", "HEBER ZAPATA", "BAULETTI", "MERNUEL", "BAULETTI",
+    "MATIAS BOTTERO", "MILICA"
+  ],
   'Futbolistas': [
     'Lionel Messi','Cristiano Ronaldo','Neymar','Kylian Mbappé','Erling Haaland','Kevin De Bruyne','Luka Modrić','Ángel Di María','Julián Álvarez','Paulo Dybala',
     'Sergio Agüero','Ronaldinho','Zinedine Zidane','Andrés Iniesta','Xavi','Diego Maradona','Pelé','Francesco Totti','Didier Drogba','Wayne Rooney'
@@ -56,6 +61,7 @@ const THEMES = {
     'Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Rage'
   ]
 };
+
 
 let chosenTheme = 'Cosas';
 let playersCount = 4;
@@ -333,4 +339,5 @@ document.addEventListener('keydown', (e) => {
     impostorSfx.src = 'impostor-pulse.mp3';
   Then the in-app 🔊 toggle will play/pause ambient music.
 */
+
 
