@@ -60,7 +60,8 @@ const THEMES = {
     'Lionel Messi','Cristiano Ronaldo','Neymar','Kylian Mbappé','Erling Haaland','Kevin De Bruyne','Luka Modrić','Ángel Di María','Julián Álvarez','Paulo Dybala',
     'Sergio Agüero','Ronaldinho','Zinedine Zidane','Andrés Iniesta','Xavi','Diego Maradona','Pelé','Francesco Totti','Didier Drogba','Wayne Rooney'
   ],
-[
+
+  "Cartas de clash royale" [
   'Gigante','Montapuercos','Mago','Horda de esbirros','Valquiria','P.E.K.K.A','Tronco','Bebé dragón','Megacaballero','Bruja',
   'Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Furia',
   'Reina arquera','Cazador','Barbaros','Barril de esqueletos','Mini P.E.K.K.A','Dragón infernal','Ejército de esqueletos','Lanzarrocas','Cementerio','Duendes',
@@ -349,6 +350,7 @@ document.addEventListener('keydown', (e) => {
     impostorSfx.src = 'impostor-pulse.mp3';
   Then the in-app 🔊 toggle will play/pause ambient music.
 */
+
 
 
 
