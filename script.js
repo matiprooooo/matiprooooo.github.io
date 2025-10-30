@@ -79,7 +79,7 @@ const THEMES = {
 let chosenTheme = 'Cosas';
 let playersCount = 4;
 let currentPlayer = 1;
-let impostorPlayer = null;
+let impostorPlayers = [];
 let usedWordIndex = null;
 let gameActive = false;
 
@@ -118,13 +118,25 @@ function startGame() {
   hudTheme.textContent = chosenTheme;
   turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
   usedWordIndex = pickRandomWordIndex();
-  impostorPlayer = randomInt(1, playersCount);
+  if (playersCount > 5) {
+  // Elegir 2 impostores distintos
+  let imp1 = randomInt(1, playersCount);
+  let imp2;
+  do {
+    imp2 = randomInt(1, playersCount);
+  } while (imp2 === imp1);
+  impostorPlayers = [imp1, imp2];
+} else {
+  // Solo 1 impostor
+  impostorPlayers = [randomInt(1, playersCount)];
+}
+
   setScreen(screenGame);
   showTurnWord();
 }
 
 function showTurnWord() {
-  const isImpostor = currentPlayer === impostorPlayer;
+  const isImpostor = impostorPlayers.includes(currentPlayer);
   wordDisplay.textContent = isImpostor ? '—' : THEMES[chosenTheme][usedWordIndex];
   impostorBadge.style.display = isImpostor ? 'block' : 'none';
 
@@ -352,6 +364,7 @@ document.addEventListener('keydown', (e) => {
     impostorSfx.src = 'impostor-pulse.mp3';
   Then the in-app 🔊 toggle will play/pause ambient music.
 */
+
 
 
 
