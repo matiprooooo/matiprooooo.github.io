@@ -340,3 +340,12 @@ body {
   outline: 2px solid rgba(30,144,255,0.75);
   outline-offset: 2px;
 }
+
+.clickable-title {
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.clickable-title:hover {
+  transform: scale(1.05);
+  filter: brightness(1.3);
+}
