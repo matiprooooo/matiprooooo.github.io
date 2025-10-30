@@ -353,6 +353,12 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+const gameTitle = document.getElementById('gameTitle');
+gameTitle.addEventListener('click', () => {
+  resetToHome();
+});
+
+
 /* -----------------------------
    Dev note: To enable sounds
 ----------------------------- */
@@ -364,6 +370,7 @@ document.addEventListener('keydown', (e) => {
     impostorSfx.src = 'impostor-pulse.mp3';
   Then the in-app 🔊 toggle will play/pause ambient music.
 */
+
 
 
 
