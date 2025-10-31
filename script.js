@@ -145,10 +145,9 @@ async function startGame() {
 
 // Terminar turno
 function endTurn() {
-  wordDisplay.textContent = '—';
-  impostorBadge.style.display = 'none';
-  overlayTransition.classList.add('active');
+  setScreen(screenFinal);
 }
+
 
 // Volver al menú
 function resetToHome() {
@@ -187,3 +186,4 @@ modalPlayers.addEventListener('click', (e) => {
 
 // Inicializar vista previa
 updatePreview();
+
