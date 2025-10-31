@@ -109,7 +109,6 @@ function escucharSala() {
   });
 }
 
-// 🧩 Iniciar partida
 async function iniciarPartida() {
   const salaRef = db.collection("salas").doc(salaID);
   const doc = await salaRef.get();
@@ -124,18 +123,40 @@ async function iniciarPartida() {
     if (!posiciones.includes(r)) posiciones.push(r);
   }
 
-const palabraComun = THEMES['Cosas'][Math.floor(Math.random() * THEMES['Cosas'].length)];
-const palabras = jugadores.map((_, i) =>
-  posiciones.includes(i) ? "IMPOSTOR" : palabraComun
-);
-
+  const palabraComun = THEMES['Cosas'][Math.floor(Math.random() * THEMES['Cosas'].length)];
+  const palabras = jugadores.map((_, i) =>
+    posiciones.includes(i) ? "IMPOSTOR" : palabraComun
+  );
 
   await salaRef.update({
     estado: "jugando",
-    palabras,
-    impostores: impostoresNombres
+    palabras
   });
 }
+
+function escucharSala() {
+  db.collection("salas").doc(salaID).onSnapshot((doc) => {
+    const datos = doc.data();
+    const jugadores = datos.jugadores || [];
+    listaJugadores.innerHTML = jugadores.map(j => `<li>${j}</li>`).join('');
+
+    if (datos.estado === "jugando" && datos.palabras && !palabraMostrada) {
+      const index = jugadores.indexOf(nombreJugador);
+      if (index === -1) return;
+      const palabra = datos.palabras[index];
+      wordDisplay.textContent = palabra;
+      wordDisplay.classList.toggle("impostor", palabra === "IMPOSTOR");
+      palabraMostrada = true;
+      setScreen(screenGame);
+    }
+  });
+}
+
+btnVolver.addEventListener('click', () => {
+  setScreen(screenHome);
+  palabraMostrada = false;
+});
+
 
 // 🗳️ Votación
 function cargarOpcionesDeVoto(jugadores) {
@@ -235,6 +256,7 @@ btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
 btnTerminar.addEventListener('click', terminarJuego);
 btnVolver.addEventListener('click', volverInicio);
+
 
 
 
