@@ -12,29 +12,33 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <canvas id="bgCanvas"></canvas>
-  <div id="cursorGlow"></div>
-
   <div class="app-wrap">
     <!-- Pantalla de inicio -->
     <section id="screenHome" class="screen active">
-      <div class="input-group">
-  <label for="inputSala">Código de sala:</label>
-  <input type="text" id="inputSala" placeholder="Ej: ABC123" maxlength="10" />
-</div>
       <div class="card">
         <h1 class="title neon-title">IMPOSTOR</h1>
-        <div class="controls">
-          <button id="btnPlay" class="btn primary">Jugar</button>
-          <button id="btnTheme" class="btn">Tema</button>
-          <button id="btnPlayers" class="btn">Jugadores</button>
+        <div class="input-group">
+          <label for="inputNombre">Tu nombre:</label>
+          <input type="text" id="inputNombre" placeholder="Ej: Matiasolis" maxlength="20" />
         </div>
-        <div class="preview-wrap">
-          <div class="preview-header">
-            <span class="label">Vista previa del tema:</span>
-            <span id="previewThemeName" class="theme-name">Cosas</span>
-          </div>
-          <ul id="previewList" class="preview-list"></ul>
+        <div class="input-group">
+          <label for="inputSala">Código de sala:</label>
+          <input type="text" id="inputSala" placeholder="Ej: ABC123" maxlength="10" />
+        </div>
+        <div class="actions">
+          <button id="btnUnirse" class="btn primary">Unirse a sala</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pantalla de espera -->
+    <section id="screenLobby" class="screen">
+      <div class="card">
+        <h2 class="title neon-title">Sala: <span id="lobbySalaID">—</span></h2>
+        <p class="label">Jugadores conectados:</p>
+        <ul id="listaJugadores" class="player-list"></ul>
+        <div class="actions">
+          <button id="btnIniciar" class="btn primary">Iniciar partida</button>
         </div>
       </div>
     </section>
@@ -42,69 +46,31 @@
     <!-- Pantalla de juego -->
     <section id="screenGame" class="screen">
       <div class="card">
-        <h1 id="gameTitle" class="title neon-title clickable-title">IMPOSTOR</h1>
+        <h1 class="title neon-title">IMPOSTOR</h1>
         <div class="hud">
           <div class="hud-item"><span class="hud-label">Sala:</span><span id="hudSala" class="hud-value">—</span></div>
-          <div class="hud-item"><span class="hud-label">Turno:</span><span id="turnInfo" class="hud-value">Jugador 1</span></div>
-          <div class="hud-item"><span class="hud-label">Tema:</span><span id="hudTheme" class="hud-value">Cosas</span></div>
+          <div class="hud-item"><span class="hud-label">Jugador:</span><span id="hudJugador" class="hud-value">—</span></div>
         </div>
         <div class="word-area">
           <div id="wordDisplay" class="word-display">—</div>
-          <div id="impostorBadge" class="impostor-badge">IMPOSTOR</div>
         </div>
         <div class="actions">
-         <button id="btnEndTurn" class="btn primary">Terminar juego</button>
+          <button id="btnTerminar" class="btn primary">Terminar juego</button>
         </div>
       </div>
     </section>
-
- 
 
     <!-- Pantalla final -->
     <section id="screenFinal" class="screen">
       <div class="card">
-        <h2 class="final-title neon-title">Todos han visto su palabra</h2>
+        <h2 class="final-title neon-title">Fin del juego</h2>
         <div class="actions">
-          <button id="btnNewGame" class="btn primary">Nueva partida</button>
+          <button id="btnVolver" class="btn primary">Volver al inicio</button>
         </div>
       </div>
     </section>
-  </div>
-
-  <!-- Modal de tema -->
-  <div id="modalTheme" class="modal">
-    <div class="modal-card">
-      <h3 class="modal-title">Elegí un tema</h3>
-      <div class="modal-grid">
-        <button class="btn pill" data-theme="Cosas">Cosas</button>
-        <button class="btn pill" data-theme="Personas">Personas</button>
-        <button class="btn pill" data-theme="Futbolistas">Futbolistas</button>
-        <button class="btn pill" data-theme="Cartas de Clash Royale">Cartas de Clash Royale</button>
-      </div>
-      <button class="btn" id="closeTheme">Cerrar</button>
-    </div>
-  </div>
-
-  <!-- Modal de jugadores -->
-  <div id="modalPlayers" class="modal">
-    <div class="modal-card">
-      <h3 class="modal-title">Cantidad de jugadores</h3>
-      <div class="modal-grid">
-        <button class="btn circle" data-count="2">2</button>
-        <button class="btn circle" data-count="3">3</button>
-        <button class="btn circle" data-count="4">4</button>
-        <button class="btn circle" data-count="5">5</button>
-        <button class="btn circle" data-count="6">6</button>
-        <button class="btn circle" data-count="7">7</button>
-        <button class="btn circle" data-count="8">8</button>
-      </div>
-      <button class="btn" id="closePlayers">Cerrar</button>
-    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
-
