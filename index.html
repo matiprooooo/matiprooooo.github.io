@@ -18,6 +18,10 @@
   <div class="app-wrap">
     <!-- Pantalla de inicio -->
     <section id="screenHome" class="screen active">
+      <div class="input-group">
+  <label for="inputSala">Código de sala:</label>
+  <input type="text" id="inputSala" placeholder="Ej: ABC123" maxlength="10" />
+</div>
       <div class="card">
         <h1 class="title neon-title">IMPOSTOR</h1>
         <div class="controls">
@@ -40,6 +44,7 @@
       <div class="card">
         <h1 id="gameTitle" class="title neon-title clickable-title">IMPOSTOR</h1>
         <div class="hud">
+          <div class="hud-item"><span class="hud-label">Sala:</span><span id="hudSala" class="hud-value">—</span></div>
           <div class="hud-item"><span class="hud-label">Turno:</span><span id="turnInfo" class="hud-value">Jugador 1</span></div>
           <div class="hud-item"><span class="hud-label">Tema:</span><span id="hudTheme" class="hud-value">Cosas</span></div>
         </div>
@@ -106,3 +111,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
