@@ -1,95 +1,72 @@
-/* IMPOSTOR — Neon Game Logic
-   - Pure JS, single-page flow
-   - Clean functions and comments
-*/
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-/* -----------------------------
-   Elements
------------------------------ */
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBsL05e0PrFEqNUE7XwytZgqOviIrFyYSY",
+  authDomain: "impostorgame-5d7ee.firebaseapp.com",
+  projectId: "impostorgame-5d7ee",
+  storageBucket: "impostorgame-5d7ee.firebasestorage.app",
+  messagingSenderId: "90706939619",
+  appId: "1:90706939619:web:cc9024682ef966ad68ffd6",
+  measurementId: "G-PYEP3HE6XW"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Elementos del DOM
 const screenHome = document.getElementById('screenHome');
 const screenGame = document.getElementById('screenGame');
 const screenFinal = document.getElementById('screenFinal');
-
 const btnPlay = document.getElementById('btnPlay');
 const btnTheme = document.getElementById('btnTheme');
 const btnPlayers = document.getElementById('btnPlayers');
 const btnEndTurn = document.getElementById('btnEndTurn');
 const btnNewGame = document.getElementById('btnNewGame');
-
 const previewThemeName = document.getElementById('previewThemeName');
 const previewList = document.getElementById('previewList');
-
 const hudTheme = document.getElementById('hudTheme');
 const turnInfo = document.getElementById('turnInfo');
 const wordDisplay = document.getElementById('wordDisplay');
 const impostorBadge = document.getElementById('impostorBadge');
-
 const overlayTransition = document.getElementById('overlayTransition');
 const btnNextRound = document.getElementById('btnNextRound');
-
 const modalTheme = document.getElementById('modalTheme');
 const modalPlayers = document.getElementById('modalPlayers');
 const closeTheme = document.getElementById('closeTheme');
 const closePlayers = document.getElementById('closePlayers');
-
 const ambientAudio = document.getElementById('ambientAudio');
 const impostorSfx = document.getElementById('impostorSfx');
 const btnAudio = document.getElementById('btnAudio');
 const audioStatus = document.getElementById('audioStatus');
+const gameTitle = document.getElementById('gameTitle');
 
-/* -----------------------------
-   Game State
------------------------------ */
+// Estado del juego
 const THEMES = {
-  'Cosas': [
-    'Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla',
-    'Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo'
-  ],
-  
-  'Personas': [
-    'EMI','Nachito (AYO)','SOLIS','EBERTZ','CABALLITO','SHOSHI','AGUSTINA','FRANCISCO','MARTIN','POLLO',
-    'BAHIANO','NICOLAU','NAHUE (EL MAMUEL)','JOACO DE PIEDRAS BLANCAS','LA COQUETA','BRANDON','LA ANA',
-    'FRASQUITO','AXEL (ÑAÑITO)','IBAI','EL MOMO','CRISTINA','CHIQUI TAPIA','DAVO','LA COBRA','GASTON EDUL',
-    'EL IVAN','LA YANI','LA SEÑO PAO (INGLES)','HEBER ZAPATA','BAULETTI','MERNUEL',
-    'MATIAS BOTTERO','MILICA','XOCAS','COSCU','JULY3P','NICKI NICOLE','PELAOKEH','PEQUEÑO J','BANANIROU','BANANERO',
-    'CATALDO','WANDA NARA','MARTINCITO','JULIO','ROBLEIS','PEDRITOVM','ELDEMENTE','BOFFEGP','MILEI','ALONSO','LA LOCOMOTORA',
-    'TOMAS MAZZA','RICARDO FORT','NORDELTUS','ELO PODCAST','ADAM SANDLER','HUGUITO ZAPATA','COLAPINTO','WILL (FUTBOLITOS)','DUKI',
-    'ZEKO','TRUENO','WOS','LA CHABONA','COFLA','MIRTHA LEGRAND','COCKER','LOS DISCIPLENTES','PACHECO CARAFLOJA','MIKECRACK','FEDE VIGEVIANI',
-    'FERNANFLOO','GERMAN GARMENDIA','VEGETTA777','WILLYREX','MARIANO CLOOS','CAMNAIR','LUZU','OLGA','MOCHA','FALUCHO','SHONGUI (VERSION MALVADA DEL SHOSHI)','YAO CABRERA','TOMAS HOLDER'
-  ],
-  
-  'Futbolistas': [
-    'Lionel Messi','Cristiano Ronaldo','Neymar','Kylian Mbappé','Erling Haaland','Kevin De Bruyne','Luka Modrić','Ángel Di María','Julián Álvarez','Paulo Dybala',
-    'Sergio Agüero','Ronaldinho','Zinedine Zidane','Andrés Iniesta','Xavi','Diego Maradona','Pelé','Francesco Totti','Didier Drogba','Wayne Rooney'
-  ],
-
-  'Cartas de Clash Royale': [
-    'Gigante','Montapuercos','Mago','Horda de esbirros','Valquiria','P.E.K.K.A','Tronco','Bebé dragón','Megacaballero','Bruja',
-    'Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Furia',
-    'Reina arquera','Cazador','Bárbaros','Barril de esqueletos','Mini P.E.K.K.A','Dragón infernal','Ejército de esqueletos','Lanzarrocas','Cementerio','Duendes',
-    'Duendes con lanza','Choza de duendes','Cañón','Torre bombardera','Torre infernal','Bola de fuego','Tornado','Zap','Espíritu de hielo',
-    'Espíritu de fuego','Espíritu eléctrico','Hielo','Curación','Clon','Lápida','Mortero','Tesla','Caballero oscuro',
-    'Sabueso de lava','Gran minero','Ballesta','Puercos reales','Recolector de elixir','Poción veneno','Reclutas reales','Cohete','Lanzafuegos'
-  ]
+  'Cosas': ['Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla','Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo'],
+  'Personas': ["EMI","Nachito(AYO)","SOLIS","EBERTZ","CABALLITO","SHOSHI","AGUSTINA","FRANCISCO","MARTIN","POLLO","BAHIANO","NICOLAU","NAHUE(EL MAMUEL)","JOACO DE PIEDRAS BLANCAS","LA COQUETA","BRANDON","LA ANA","FRASQUITO","AXEL(ÑAÑITO)","IBAI","EL MOMO","CRISTINA","CHIQUI TAPIA","DAVO","LA COBRA","GASTON EDUL","EL IVAN","LA YANI","LA SEÑO PAU(INGLES)","HEBER ZAPATA","BAULETTI","MERNUEL","BAULETTI","MATIAS BOTTERO","MILICA"],
+  'Futbolistas': ['Lionel Messi','Cristiano Ronaldo','Neymar','Kylian Mbappé','Erling Haaland','Kevin De Bruyne','Luka Modrić','Ángel Di María','Julián Álvarez','Paulo Dybala','Sergio Agüero','Ronaldinho','Zinedine Zidane','Andrés Iniesta','Xavi','Diego Maradona','Pelé','Francesco Totti','Didier Drogba','Wayne Rooney'],
+  'Cartas de Clash Royale': ['Gigante','Montapuercos','Mago','Horda de esbirros','Valquiria','P.E.K.K.A','Tronco','Bebé dragón','Megacaballero','Bruja','Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Rage']
 };
-
-
-
 
 let chosenTheme = 'Cosas';
 let playersCount = 4;
 let currentPlayer = 1;
-let impostorPlayers = [];
-let usedWordIndex = null;
-let gameActive = false;
+let salaID = 'ABC123'; // Podés generar uno dinámico si querés
+let audioEnabled = false;
 
-/* -----------------------------
-   Utility
------------------------------ */
+// Funciones de pantalla
 function setScreen(screen) {
-  // Hide all
   [screenHome, screenGame, screenFinal].forEach(s => s.classList.remove('active'));
-  // Show chosen
   screen.classList.add('active');
 }
 
@@ -100,90 +77,95 @@ function updatePreview() {
   previewList.innerHTML = sample.map(item => `<li>${item}</li>`).join('');
 }
 
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+// Crear sala en Firestore
+async function crearSala(codigo, tema, cantidadJugadores) {
+  const palabras = asignarPalabras(tema, cantidadJugadores);
+  await db.collection("salas").doc(codigo).set({
+    tema,
+    jugadores: cantidadJugadores,
+    palabras,
+    turnoActual: 1,
+    estado: "jugando"
+  });
 }
 
-function pickRandomWordIndex() {
-  const list = THEMES[chosenTheme];
-  return randomInt(0, list.length - 1);
+// Asignar palabras e impostores
+function asignarPalabras(tema, cantidad) {
+  const lista = THEMES[tema];
+  const palabra = lista[Math.floor(Math.random() * lista.length)];
+  const impostores = cantidad > 5 ? 2 : 1;
+  const posiciones = [];
+
+  while (posiciones.length < impostores) {
+    const r = Math.floor(Math.random() * cantidad);
+    if (!posiciones.includes(r)) posiciones.push(r);
+  }
+
+  const resultado = [];
+  for (let i = 0; i < cantidad; i++) {
+    resultado.push(posiciones.includes(i) ? "IMPOSTOR" : palabra);
+  }
+
+  return resultado;
 }
 
-/* -----------------------------
-   Game Flow
------------------------------ */
-function startGame() {
-  gameActive = true;
-  currentPlayer = 1;
-  hudTheme.textContent = chosenTheme;
-  turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
-  usedWordIndex = pickRandomWordIndex();
-  if (playersCount > 5) {
-  // Elegir 2 impostores distintos
-  let imp1 = randomInt(1, playersCount);
-  let imp2;
-  do {
-    imp2 = randomInt(1, playersCount);
-  } while (imp2 === imp1);
-  impostorPlayers = [imp1, imp2];
-} else {
-  // Solo 1 impostor
-  impostorPlayers = [randomInt(1, playersCount)];
-}
+// Mostrar palabra del jugador actual
+async function mostrarPalabra() {
+  const doc = await db.collection("salas").doc(salaID).get();
+  if (doc.exists) {
+    const datos = doc.data();
+    const palabra = datos.palabras[currentPlayer - 1];
+    wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
+    impostorBadge.style.display = palabra === "IMPOSTOR" ? "block" : "none";
 
-  setScreen(screenGame);
-  showTurnWord();
-}
+    if (palabra === "IMPOSTOR" && impostorSfx && impostorSfx.src) {
+      try { impostorSfx.currentTime = 0; impostorSfx.play(); } catch (e) {}
+    }
 
-function showTurnWord() {
-  const isImpostor = impostorPlayers.includes(currentPlayer);
-  wordDisplay.textContent = isImpostor ? '—' : THEMES[chosenTheme][usedWordIndex];
-  impostorBadge.style.display = isImpostor ? 'block' : 'none';
-
-  // Play short SFX when impostor sees it (optional)
-  if (isImpostor && impostorSfx && impostorSfx.src) {
-    try { impostorSfx.currentTime = 0; impostorSfx.play(); } catch (e) {}
+    turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
+    hudTheme.textContent = datos.tema;
   }
 }
 
+// Avanzar turno
+async function avanzarTurno() {
+  const ref = db.collection("salas").doc(salaID);
+  const doc = await ref.get();
+  if (doc.exists) {
+    const datos = doc.data();
+    const siguiente = datos.turnoActual + 1;
+    await ref.update({ turnoActual: siguiente });
+    currentPlayer = siguiente;
+
+    if (siguiente > playersCount) {
+      setScreen(screenFinal);
+    } else {
+      mostrarPalabra();
+    }
+  }
+}
+
+// Iniciar partida
+async function startGame() {
+  currentPlayer = 1;
+  await crearSala(salaID, chosenTheme, playersCount);
+  setScreen(screenGame);
+  mostrarPalabra();
+}
+
+// Terminar turno
 function endTurn() {
-  // Ocultar palabra antes de pasar el dispositivo
   wordDisplay.textContent = '—';
   impostorBadge.style.display = 'none';
-
-  // Mostrar overlay
   overlayTransition.classList.add('active');
 }
 
-
-function nextRound() {
-  overlayTransition.classList.remove('active');
-  currentPlayer++;
-  if (currentPlayer > playersCount) {
-    // Everyone has seen their word
-    gameActive = false;
-    setScreen(screenFinal);
-  } else {
-    // Next player sees the word or impostor badge
-    turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
-    showTurnWord();
-  }
-}
-
+// Volver al menú
 function resetToHome() {
-  // Reset state
-  gameActive = false;
-  currentPlayer = 1;
-  impostorPlayer = null;
-  usedWordIndex = null;
   setScreen(screenHome);
 }
 
-/* -----------------------------
-   Audio Controls
------------------------------ */
-let audioEnabled = false;
-
+// Audio
 function toggleAudio() {
   audioEnabled = !audioEnabled;
   audioStatus.textContent = audioEnabled ? 'Activo' : 'Silencio';
@@ -195,13 +177,10 @@ function toggleAudio() {
   }
 }
 
-/* -----------------------------
-   Modals
------------------------------ */
+// Modales
 function openModal(modal) { modal.classList.add('active'); }
 function closeModal(modal) { modal.classList.remove('active'); }
 
-/* Theme selection buttons */
 modalTheme.addEventListener('click', (e) => {
   const btn = e.target.closest('.btn[data-theme]');
   if (!btn) return;
@@ -211,7 +190,6 @@ modalTheme.addEventListener('click', (e) => {
 });
 closeTheme.addEventListener('click', () => closeModal(modalTheme));
 
-/* Players selection buttons */
 modalPlayers.addEventListener('click', (e) => {
   const btn = e.target.closest('.btn[data-count]');
   if (!btn) return;
@@ -220,162 +198,6 @@ modalPlayers.addEventListener('click', (e) => {
 });
 closePlayers.addEventListener('click', () => closeModal(modalPlayers));
 
-/* -----------------------------
-   Events
------------------------------ */
+// Eventos
 btnTheme.addEventListener('click', () => openModal(modalTheme));
-btnPlayers.addEventListener('click', () => openModal(modalPlayers));
-btnPlay.addEventListener('click', () => startGame());
-btnEndTurn.addEventListener('click', () => endTurn());
-btnNextRound.addEventListener('click', () => nextRound());
-btnNewGame.addEventListener('click', () => resetToHome());
-btnAudio.addEventListener('click', () => toggleAudio());
-
-/* Initial preview */
-updatePreview();
-
-/* -----------------------------
-   Particles Background + Cursor Glow
------------------------------ */
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d', { alpha: true });
-let width = 0, height = 0, particles = [];
-const PARTICLE_COUNT = 120;
-const COLORS = ['#8a2be2', '#1e90ff', '#ff2d55'];
-
-function resizeCanvas() {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-function createParticles() {
-  particles = new Array(PARTICLE_COUNT).fill(0).map(() => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    vx: (Math.random() - 0.5) * 0.6,
-    vy: (Math.random() - 0.5) * 0.6,
-    r: Math.random() * 2 + 1,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)]
-  }));
-}
-createParticles();
-
-let mouseX = width / 2;
-let mouseY = height / 2;
-const glow = document.getElementById('cursorGlow');
-
-window.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  glow.style.left = `${mouseX}px`;
-  glow.style.top = `${mouseY}px`;
-});
-
-function animate() {
-  ctx.clearRect(0, 0, width, height);
-
-  // Draw soft gradient background shimmer
-  const grad = ctx.createRadialGradient(mouseX, mouseY, 60, mouseX, mouseY, 400);
-  grad.addColorStop(0, 'rgba(138,43,226,0.06)');
-  grad.addColorStop(1, 'rgba(30,144,255,0.02)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, width, height);
-
-  // Move & draw particles
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-
-    // gentle wrap
-    if (p.x < -10) p.x = width + 10;
-    if (p.x > width + 10) p.x = -10;
-    if (p.y < -10) p.y = height + 10;
-    if (p.y > height + 10) p.y = -10;
-
-    // slight mouse attraction
-    const dx = mouseX - p.x;
-    const dy = mouseY - p.y;
-    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
-    const force = Math.min(1 / dist, 0.02);
-    p.vx += (dx * force) * 0.002;
-    p.vy += (dy * force) * 0.002;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = p.color;
-    ctx.globalAlpha = 0.8;
-    ctx.fill();
-
-    // neon glow
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = p.color;
-    ctx.globalAlpha = 0.35;
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.globalAlpha = 1;
-  });
-
-  // connect near particles with faint lines
-  ctx.lineWidth = 0.6;
-  particles.forEach((p, i) => {
-    for (let j = i + 1; j < particles.length; j++) {
-      const q = particles[j];
-      const dx = p.x - q.x;
-      const dy = p.y - q.y;
-      const d2 = dx*dx + dy*dy;
-      if (d2 < 140*140) {
-        const a = 1 - (Math.sqrt(d2) / 140);
-        ctx.strokeStyle = `rgba(142, 202, 255, ${a * 0.25})`;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(q.x, q.y);
-        ctx.stroke();
-      }
-    }
-  });
-
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* -----------------------------
-   Accessibility / Keyboard
------------------------------ */
-document.addEventListener('keydown', (e) => {
-  if (!gameActive) return;
-  // Enter or Space can end turn
-  if ((e.key === 'Enter' || e.key === ' ') && !overlayTransition.classList.contains('active')) {
-    endTurn();
-  } else if ((e.key === 'Enter' || e.key === ' ') && overlayTransition.classList.contains('active')) {
-    nextRound();
-  }
-});
-
-const gameTitle = document.getElementById('gameTitle');
-gameTitle.addEventListener('click', () => {
-  resetToHome();
-});
-
-
-/* -----------------------------
-   Dev note: To enable sounds
------------------------------ */
-/*
-- Ambient music: set ambientAudio.src to a local loop file (soft synth pad).
-- Impostor SFX: set impostorSfx.src to a short pulse/beep file.
-  Example:
-    ambientAudio.src = 'ambient-loop.mp3';
-    impostorSfx.src = 'impostor-pulse.mp3';
-  Then the in-app 🔊 toggle will play/pause ambient music.
-*/
-
-
-
-
-
-
-
-
-
+btnPlayers.add
