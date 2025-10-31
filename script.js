@@ -76,18 +76,27 @@ async function unirseASala() {
   hudSala.textContent = salaID;
   hudJugador.textContent = nombreJugador;
   setScreen(screenLobby);
-  escucharJugadores();
+escucharSala();
   btnIniciar.style.display = esCreador ? 'inline-block' : 'none';
 }
 
-// Escuchar jugadores conectados
-function escucharJugadores() {
+function escucharSala() {
   db.collection("salas").doc(salaID).onSnapshot((doc) => {
     const datos = doc.data();
     const jugadores = datos.jugadores || [];
     listaJugadores.innerHTML = jugadores.map(j => `<li>${j}</li>`).join('');
+
+    // Si el juego ya empezó y hay palabras asignadas
+    if (datos.estado === "jugando" && datos.palabras && !palabraMostrada) {
+      const index = jugadores.indexOf(nombreJugador);
+      const palabra = datos.palabras[index];
+      wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
+      palabraMostrada = true;
+      setScreen(screenGame);
+    }
   });
 }
+
 
 // Iniciar partida (solo creador)
 async function iniciarPartida() {
@@ -157,3 +166,4 @@ btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
 btnTerminar.addEventListener('click', terminarJuego);
 btnVolver.addEventListener('click', volverInicio);
+
