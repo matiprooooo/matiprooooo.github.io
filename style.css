@@ -157,3 +157,10 @@ body {
   text-align: center;
   margin-bottom: 1rem;
 }
+
+.word-display.impostor {
+  color: red;
+  text-shadow: 0 0 10px red;
+}
+
+
