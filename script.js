@@ -1,3 +1,7 @@
+const inputSala = document.getElementById('inputSala');
+const hudSala = document.getElementById('hudSala');
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyBsL05e0PrFEqNUE7XwytZgqOviIrFyYSY",
   authDomain: "impostorgame-5d7ee.firebaseapp.com",
@@ -45,7 +49,8 @@ const THEMES = {
 let chosenTheme = 'Cosas';
 let playersCount = 4;
 let currentPlayer = 1;
-let salaID = 'ABC123';
+let salaID = '';
+
 
 // Funciones de pantalla
 function setScreen(screen) {
@@ -126,6 +131,8 @@ async function avanzarTurno() {
 // Iniciar partida
 async function startGame() {
   currentPlayer = 1;
+  salaID = inputSala.value.trim().toUpperCase() || 'ABC123';
+hudSala.textContent = salaID;
   await crearSala(salaID, chosenTheme, playersCount);
   setScreen(screenGame);
   mostrarPalabra();
@@ -175,3 +182,4 @@ modalPlayers.addEventListener('click', (e) => {
 
 // Inicializar vista previa
 updatePreview();
+
