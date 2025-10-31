@@ -230,4 +230,8 @@ function volverInicio() {
 // 🧷 Eventos
 btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
+btnTerminar.addEventListener('click', terminarJuego);
+btnVolver.addEventListener('click', volverInicio);
+
+
 
