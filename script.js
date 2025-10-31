@@ -1,3 +1,7 @@
+const screenVotacion = document.getElementById('screenVotacion');
+const listaVotacion = document.getElementById('listaVotacion');
+const btnEnviarVoto = document.getElementById('btnEnviarVoto');
+let votoSeleccionado = '';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBsL05e0PrFEqNUE7XwytZgqOviIrFyYSY",
@@ -152,8 +156,10 @@ async function mostrarPalabra(jugadores) {
 
 // Terminar juego
 function terminarJuego() {
-  setScreen(screenFinal);
+  setScreen(screenVotacion);
+  cargarOpcionesDeVoto();
 }
+
 
 // Volver al inicio
 function volverInicio() {
@@ -161,9 +167,77 @@ function volverInicio() {
   palabraMostrada = false;
 }
 
+function cargarOpcionesDeVoto() {
+  db.collection("salas").doc(salaID).get().then(doc => {
+    const datos = doc.data();
+    const jugadores = datos.jugadores || [];
+    listaVotacion.innerHTML = '';
+    jugadores.forEach(j => {
+      const li = document.createElement('li');
+      li.textContent = j;
+      li.addEventListener('click', () => {
+        votoSeleccionado = j;
+        document.querySelectorAll('#listaVotacion li').forEach(el => el.classList.remove('selected'));
+        li.classList.add('selected');
+      });
+      listaVotacion.appendChild(li);
+    });
+  });
+}
+
+btnEnviarVoto.addEventListener('click', async () => {
+  if (!votoSeleccionado) return;
+
+  const salaRef = db.collection("salas").doc(salaID);
+  const doc = await salaRef.get();
+  const datos = doc.data();
+  const votos = datos.votos || {};
+  votos[nombreJugador] = votoSeleccionado;
+
+  await salaRef.update({ votos });
+
+  verificarFinDeVotacion();
+});
+async function verificarFinDeVotacion() {
+  const salaRef = db.collection("salas").doc(salaID);
+  const doc = await salaRef.get();
+  const datos = doc.data();
+  const jugadores = datos.jugadores || [];
+  const votos = datos.votos || {};
+
+  if (Object.keys(votos).length === jugadores.length) {
+    mostrarResultadoFinal(jugadores, datos.palabras, votos);
+  } else {
+    setScreen(screenFinal); // Espera a que todos voten
+  }
+}
+function mostrarResultadoFinal(jugadores, palabras, votos) {
+  const conteo = {};
+  Object.values(votos).forEach(v => {
+    conteo[v] = (conteo[v] || 0) + 1;
+  });
+
+  let masVotado = null;
+  let maxVotos = 0;
+
+  for (const jugador in conteo) {
+    if (conteo[jugador] > maxVotos) {
+      masVotado = jugador;
+      maxVotos = conteo[jugador];
+    }
+  }
+
+  const index = jugadores.indexOf(masVotado);
+  const fueImpostor = palabras[index] === "IMPOSTOR";
+
+  alert(`El más votado fue ${masVotado}.\n${fueImpostor ? "¡Era el impostor! 🎉" : "No era el impostor 😬"}`);
+  setScreen(screenFinal);
+}
+
 // Eventos
 btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
 btnTerminar.addEventListener('click', terminarJuego);
 btnVolver.addEventListener('click', volverInicio);
+
 
