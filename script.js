@@ -1,5 +1,3 @@
-const inputSala = document.getElementById('inputSala');
-const hudSala = document.getElementById('hudSala');
 
 
 const firebaseConfig = {
@@ -27,6 +25,7 @@ const btnNewGame = document.getElementById('btnNewGame');
 const previewThemeName = document.getElementById('previewThemeName');
 const previewList = document.getElementById('previewList');
 const hudTheme = document.getElementById('hudTheme');
+const hudSala = document.getElementById('hudSala');
 const turnInfo = document.getElementById('turnInfo');
 const wordDisplay = document.getElementById('wordDisplay');
 const impostorBadge = document.getElementById('impostorBadge');
@@ -37,6 +36,7 @@ const modalPlayers = document.getElementById('modalPlayers');
 const closeTheme = document.getElementById('closeTheme');
 const closePlayers = document.getElementById('closePlayers');
 const gameTitle = document.getElementById('gameTitle');
+const inputSala = document.getElementById('inputSala');
 
 // Estado del juego
 const THEMES = {
@@ -50,7 +50,7 @@ let chosenTheme = 'Cosas';
 let playersCount = 4;
 let currentPlayer = 1;
 let salaID = '';
-
+let palabraMostrada = false;
 
 // Funciones de pantalla
 function setScreen(screen) {
@@ -97,10 +97,7 @@ function asignarPalabras(tema, cantidad) {
   return resultado;
 }
 
-// Mostrar palabra del jugador actual
-async function mostrarPalabra() {
- let palabraMostrada = false;
-
+// Mostrar palabra del jugador actual (solo una vez)
 async function mostrarPalabra() {
   if (palabraMostrada) return;
 
@@ -112,24 +109,13 @@ async function mostrarPalabra() {
     impostorBadge.style.display = palabra === "IMPOSTOR" ? "block" : "none";
     turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
     hudTheme.textContent = datos.tema;
+    hudSala.textContent = salaID;
     palabraMostrada = true;
   }
 }
 
-  const doc = await db.collection("salas").doc(salaID).get();
-  if (doc.exists) {
-    const datos = doc.data();
-    const palabra = datos.palabras[currentPlayer - 1];
-    wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
-    impostorBadge.style.display = palabra === "IMPOSTOR" ? "block" : "none";
-    turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
-    hudTheme.textContent = datos.tema;
-  }
-}
-
-// Avanzar turno
+// Avanzar turno y terminar si es el último
 async function avanzarTurno() {
-  async function avanzarTurno() {
   const ref = db.collection("salas").doc(salaID);
   const doc = await ref.get();
   if (doc.exists) {
@@ -147,27 +133,11 @@ async function avanzarTurno() {
   }
 }
 
-  const ref = db.collection("salas").doc(salaID);
-  const doc = await ref.get();
-  if (doc.exists) {
-    const datos = doc.data();
-    const siguiente = datos.turnoActual + 1;
-    await ref.update({ turnoActual: siguiente });
-    currentPlayer = siguiente;
-
-    if (siguiente > playersCount) {
-      setScreen(screenFinal);
-    } else {
-      mostrarPalabra();
-    }
-  }
-}
-
 // Iniciar partida
 async function startGame() {
-  currentPlayer = 1;
   salaID = inputSala.value.trim().toUpperCase() || 'ABC123';
-hudSala.textContent = salaID;
+  currentPlayer = 1;
+  palabraMostrada = false;
   await crearSala(salaID, chosenTheme, playersCount);
   setScreen(screenGame);
   mostrarPalabra();
@@ -217,5 +187,3 @@ modalPlayers.addEventListener('click', (e) => {
 
 // Inicializar vista previa
 updatePreview();
-
-
