@@ -99,6 +99,23 @@ function asignarPalabras(tema, cantidad) {
 
 // Mostrar palabra del jugador actual
 async function mostrarPalabra() {
+ let palabraMostrada = false;
+
+async function mostrarPalabra() {
+  if (palabraMostrada) return;
+
+  const doc = await db.collection("salas").doc(salaID).get();
+  if (doc.exists) {
+    const datos = doc.data();
+    const palabra = datos.palabras[currentPlayer - 1];
+    wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
+    impostorBadge.style.display = palabra === "IMPOSTOR" ? "block" : "none";
+    turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
+    hudTheme.textContent = datos.tema;
+    palabraMostrada = true;
+  }
+}
+
   const doc = await db.collection("salas").doc(salaID).get();
   if (doc.exists) {
     const datos = doc.data();
@@ -112,6 +129,24 @@ async function mostrarPalabra() {
 
 // Avanzar turno
 async function avanzarTurno() {
+  async function avanzarTurno() {
+  const ref = db.collection("salas").doc(salaID);
+  const doc = await ref.get();
+  if (doc.exists) {
+    const datos = doc.data();
+    const siguiente = datos.turnoActual + 1;
+
+    if (siguiente > playersCount) {
+      setScreen(screenFinal);
+    } else {
+      await ref.update({ turnoActual: siguiente });
+      currentPlayer = siguiente;
+      palabraMostrada = false;
+      mostrarPalabra();
+    }
+  }
+}
+
   const ref = db.collection("salas").doc(salaID);
   const doc = await ref.get();
   if (doc.exists) {
@@ -182,4 +217,5 @@ modalPlayers.addEventListener('click', (e) => {
 
 // Inicializar vista previa
 updatePreview();
+
 
