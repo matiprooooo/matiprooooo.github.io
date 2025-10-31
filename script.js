@@ -255,7 +255,17 @@ function volverInicio() {
 btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
 btnTerminar.addEventListener('click', terminarJuego);
-btnVolver.addEventListener('click', volverInicio);
+btnVolver.addEventListener('click', async () => {
+  await borrarSalaSiEsCreador();
+  setScreen(screenHome);
+  palabraMostrada = false;
+});
+
+
+async function borrarSalaSiEsCreador() {
+  if (!esCreador || !salaID) return;
+  await db.collection("salas").doc(salaID).delete();
+}
 
 
 
