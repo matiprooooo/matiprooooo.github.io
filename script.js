@@ -29,8 +29,6 @@ const hudSala = document.getElementById('hudSala');
 const turnInfo = document.getElementById('turnInfo');
 const wordDisplay = document.getElementById('wordDisplay');
 const impostorBadge = document.getElementById('impostorBadge');
-const overlayTransition = document.getElementById('overlayTransition');
-const btnNextRound = document.getElementById('btnNextRound');
 const modalTheme = document.getElementById('modalTheme');
 const modalPlayers = document.getElementById('modalPlayers');
 const closeTheme = document.getElementById('closeTheme');
@@ -143,10 +141,10 @@ async function startGame() {
   mostrarPalabra();
 }
 
-// Terminar turno
 function endTurn() {
-  setScreen(screenFinal);
+  setScreen(screenHome);
 }
+
 
 
 // Volver al menú
@@ -157,10 +155,6 @@ function resetToHome() {
 // Eventos
 btnPlay.addEventListener('click', startGame);
 btnEndTurn.addEventListener('click', endTurn);
-btnNextRound.addEventListener('click', () => {
-  overlayTransition.classList.remove('active');
-  avanzarTurno();
-});
 btnNewGame.addEventListener('click', resetToHome);
 gameTitle.addEventListener('click', resetToHome);
 
@@ -186,4 +180,5 @@ modalPlayers.addEventListener('click', (e) => {
 
 // Inicializar vista previa
 updatePreview();
+
 
