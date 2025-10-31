@@ -8,44 +8,37 @@ const firebaseConfig = {
   measurementId: "G-PYEP3HE6XW"
 };
 
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 🎯 Elementos del DOM
+// 🎯 DOM elements
 const screenHome = document.getElementById('screenHome');
 const screenLobby = document.getElementById('screenLobby');
 const screenGame = document.getElementById('screenGame');
-const screenVotacion = document.getElementById('screenVotacion');
-const screenFinal = document.getElementById('screenFinal');
 const inputNombre = document.getElementById('inputNombre');
 const inputSala = document.getElementById('inputSala');
 const btnUnirse = document.getElementById('btnUnirse');
 const btnIniciar = document.getElementById('btnIniciar');
-const btnTerminar = document.getElementById('btnTerminar');
 const btnVolver = document.getElementById('btnVolver');
-const btnEnviarVoto = document.getElementById('btnEnviarVoto');
+const btnTerminar = document.getElementById('btnTerminar');
 const lobbySalaID = document.getElementById('lobbySalaID');
 const listaJugadores = document.getElementById('listaJugadores');
-const listaVotacion = document.getElementById('listaVotacion');
 const wordDisplay = document.getElementById('wordDisplay');
 const hudSala = document.getElementById('hudSala');
 const hudJugador = document.getElementById('hudJugador');
 
 const THEMES = {
-  'Cosas': ['Solis','Shoshi','Agustina','Caballito','Fran','Nachito','Bahiano','Eber','Pollo','Nicolau','Emi','Martin','Davo','La cobra','Gaston Edul','Elmomo','Bananero','Bananirou','La coqueta','Yao Cabrera']
+  'Cosas': ['Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla','Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo']
 };
 
 let nombreJugador = '';
 let salaID = '';
 let esCreador = false;
 let palabraMostrada = false;
-let votoSeleccionado = '';
-let rondaActual = 1;
 
 // 🧠 Pantallas
 function setScreen(screen) {
-  [screenHome, screenLobby, screenGame, screenVotacion, screenFinal].forEach(s => s.classList.remove('active'));
+  [screenHome, screenLobby, screenGame].forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
 }
 
@@ -63,10 +56,7 @@ async function unirseASala() {
     await salaRef.set({
       creador: nombreJugador,
       jugadores: [nombreJugador],
-      estado: "esperando",
-      ronda: 1,
-      eliminados: [],
-      votos: {}
+      estado: "esperando"
     });
   } else {
     const datos = doc.data();
@@ -78,15 +68,23 @@ async function unirseASala() {
     esCreador = datos.creador === nombreJugador;
   }
 
+  // Presencia
+  const presenciaRef = salaRef.collection("presencia").doc(nombreJugador);
+  await presenciaRef.set({ activo: true });
+  window.addEventListener("beforeunload", () => {
+    presenciaRef.delete();
+  });
+
   lobbySalaID.textContent = salaID;
   hudSala.textContent = salaID;
   hudJugador.textContent = nombreJugador;
   setScreen(screenLobby);
   escucharSala();
+  escucharPresencia();
   btnIniciar.style.display = esCreador ? 'inline-block' : 'none';
 }
 
-// 👂 Escuchar cambios en la sala
+// 👂 Escuchar sala
 function escucharSala() {
   db.collection("salas").doc(salaID).onSnapshot((doc) => {
     const datos = doc.data();
@@ -98,17 +96,25 @@ function escucharSala() {
       if (index === -1) return;
       const palabra = datos.palabras[index];
       wordDisplay.textContent = palabra;
+      wordDisplay.classList.toggle("impostor", palabra === "IMPOSTOR");
       palabraMostrada = true;
       setScreen(screenGame);
-    }
-
-    if (datos.estado === "votando" && !datos.eliminados.includes(nombreJugador)) {
-      cargarOpcionesDeVoto(jugadores);
-      setScreen(screenVotacion);
     }
   });
 }
 
+// 👥 Escuchar presencia
+function escucharPresencia() {
+  const salaRef = db.collection("salas").doc(salaID);
+  salaRef.collection("presencia").onSnapshot(async (snapshot) => {
+    const activos = snapshot.docs.map(doc => doc.id);
+    if (activos.length === 0) {
+      await salaRef.delete();
+    }
+  });
+}
+
+// 🧩 Iniciar partida
 async function iniciarPartida() {
   const salaRef = db.collection("salas").doc(salaID);
   const doc = await salaRef.get();
@@ -134,140 +140,19 @@ async function iniciarPartida() {
   });
 }
 
-function escucharSala() {
-  db.collection("salas").doc(salaID).onSnapshot((doc) => {
-    const datos = doc.data();
-    const jugadores = datos.jugadores || [];
-    listaJugadores.innerHTML = jugadores.map(j => `<li>${j}</li>`).join('');
-
-    if (datos.estado === "jugando" && datos.palabras && !palabraMostrada) {
-      const index = jugadores.indexOf(nombreJugador);
-      if (index === -1) return;
-      const palabra = datos.palabras[index];
-      wordDisplay.textContent = palabra;
-      wordDisplay.classList.toggle("impostor", palabra === "IMPOSTOR");
-      palabraMostrada = true;
-      setScreen(screenGame);
-    }
-  });
-}
-
-btnVolver.addEventListener('click', () => {
-  setScreen(screenHome);
-  palabraMostrada = false;
-});
-
-
-// 🗳️ Votación
-function cargarOpcionesDeVoto(jugadores) {
-  listaVotacion.innerHTML = '';
-  jugadores.forEach(j => {
-    if (j === nombreJugador) return;
-    const li = document.createElement('li');
-    li.textContent = j;
-    li.addEventListener('click', () => {
-      votoSeleccionado = j;
-      document.querySelectorAll('#listaVotacion li').forEach(el => el.classList.remove('selected'));
-      li.classList.add('selected');
-    });
-    listaVotacion.appendChild(li);
-  });
-}
-
-btnEnviarVoto.addEventListener('click', async () => {
-  if (!votoSeleccionado) return;
-
-  const salaRef = db.collection("salas").doc(salaID);
-  const doc = await salaRef.get();
-  const datos = doc.data();
-  const votos = datos.votos || {};
-  votos[nombreJugador] = votoSeleccionado;
-
-  await salaRef.update({ votos });
-  verificarFinDeVotacion();
-});
-
-// 📊 Verificar votos
-async function verificarFinDeVotacion() {
-  const salaRef = db.collection("salas").doc(salaID);
-  const doc = await salaRef.get();
-  const datos = doc.data();
-  const jugadores = datos.jugadores.filter(j => !datos.eliminados.includes(j));
-  const votos = datos.votos || {};
-
-  if (Object.keys(votos).length >= jugadores.length - 1) {
-    const conteo = {};
-    Object.values(votos).forEach(v => {
-      conteo[v] = (conteo[v] || 0) + 1;
-    });
-
-    let masVotado = null;
-    let maxVotos = 0;
-    for (const jugador in conteo) {
-      if (conteo[jugador] > maxVotos) {
-        masVotado = jugador;
-        maxVotos = conteo[jugador];
-      }
-    }
-
-    const eliminados = datos.eliminados || [];
-    eliminados.push(masVotado);
-    const impostores = datos.impostores || [];
-    const impostoresRestantes = impostores.filter(i => !eliminados.includes(i));
-    const vivos = datos.jugadores.filter(j => !eliminados.includes(j));
-
-    let mensaje = `${masVotado} fue eliminado.\n`;
-    mensaje += impostores.includes(masVotado) ? "¡Era un impostor!" : "No era un impostor.";
-
-    alert(mensaje);
-
-    if (impostoresRestantes.length === 0) {
-      alert("¡Ganaron los jugadores!");
-      setScreen(screenFinal);
-    } else if ((datos.jugadores.length <= 5 && vivos.length <= 2) || (datos.jugadores.length > 5 && vivos.length <= 3 && impostoresRestantes.length > 0)) {
-      alert("¡Ganaron los impostores!");
-      setScreen(screenFinal);
-    } else {
-      await salaRef.update({
-        votos: {},
-        eliminados,
-        ronda: datos.ronda + 1,
-        estado: "votando"
-      });
-    }
-  }
-}
-
-// 🔚 Terminar juego → inicia votación
-function terminarJuego() {
-  db.collection("salas").doc(salaID).update({ estado: "votando" });
-}
-
 // 🔁 Volver al inicio
-function volverInicio() {
+btnVolver.addEventListener('click', async () => {
+  if (esCreador && salaID) {
+    await db.collection("salas").doc(salaID).delete();
+  }
   setScreen(screenHome);
   palabraMostrada = false;
-  votoSeleccionado = '';
-  rondaActual = 1;
-}
+});
 
 // 🧷 Eventos
 btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
-btnTerminar.addEventListener('click', terminarJuego);
-btnVolver.addEventListener('click', async () => {
-  await borrarSalaSiEsCreador();
+btnTerminar.addEventListener('click', () => {
   setScreen(screenHome);
   palabraMostrada = false;
 });
-
-
-async function borrarSalaSiEsCreador() {
-  if (!esCreador || !salaID) return;
-  await db.collection("salas").doc(salaID).delete();
-}
-
-
-
-
-
