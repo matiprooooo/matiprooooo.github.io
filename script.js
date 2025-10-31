@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyBsL05e0PrFEqNUE7XwytZgqOviIrFyYSY",
   authDomain: "impostorgame-5d7ee.firebaseapp.com",
@@ -11,9 +10,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
-
-
 
 // Elementos del DOM
 const screenHome = document.getElementById('screenHome');
@@ -36,10 +32,6 @@ const modalTheme = document.getElementById('modalTheme');
 const modalPlayers = document.getElementById('modalPlayers');
 const closeTheme = document.getElementById('closeTheme');
 const closePlayers = document.getElementById('closePlayers');
-const ambientAudio = document.getElementById('ambientAudio');
-const impostorSfx = document.getElementById('impostorSfx');
-const btnAudio = document.getElementById('btnAudio');
-const audioStatus = document.getElementById('audioStatus');
 const gameTitle = document.getElementById('gameTitle');
 
 // Estado del juego
@@ -53,8 +45,7 @@ const THEMES = {
 let chosenTheme = 'Cosas';
 let playersCount = 4;
 let currentPlayer = 1;
-let salaID = 'ABC123'; // Podés generar uno dinámico si querés
-let audioEnabled = false;
+let salaID = 'ABC123';
 
 // Funciones de pantalla
 function setScreen(screen) {
@@ -109,11 +100,6 @@ async function mostrarPalabra() {
     const palabra = datos.palabras[currentPlayer - 1];
     wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
     impostorBadge.style.display = palabra === "IMPOSTOR" ? "block" : "none";
-
-    if (palabra === "IMPOSTOR" && impostorSfx && impostorSfx.src) {
-      try { impostorSfx.currentTime = 0; impostorSfx.play(); } catch (e) {}
-    }
-
     turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
     hudTheme.textContent = datos.tema;
   }
@@ -157,40 +143,35 @@ function resetToHome() {
   setScreen(screenHome);
 }
 
-// Audio
-function toggleAudio() {
-  audioEnabled = !audioEnabled;
-  audioStatus.textContent = audioEnabled ? 'Activo' : 'Silencio';
-  btnAudio.textContent = audioEnabled ? '🔊' : '🔇';
-  if (audioEnabled) {
-    try { ambientAudio.volume = 0.3; ambientAudio.play(); } catch (e) {}
-  } else {
-    ambientAudio.pause();
-  }
-}
+// Eventos
+btnPlay.addEventListener('click', startGame);
+btnEndTurn.addEventListener('click', endTurn);
+btnNextRound.addEventListener('click', () => {
+  overlayTransition.classList.remove('active');
+  avanzarTurno();
+});
+btnNewGame.addEventListener('click', resetToHome);
+gameTitle.addEventListener('click', resetToHome);
 
-// Modales
-function openModal(modal) { modal.classList.add('active'); }
-function closeModal(modal) { modal.classList.remove('active'); }
+btnTheme.addEventListener('click', () => modalTheme.classList.add('active'));
+btnPlayers.addEventListener('click', () => modalPlayers.classList.add('active'));
+closeTheme.addEventListener('click', () => modalTheme.classList.remove('active'));
+closePlayers.addEventListener('click', () => modalPlayers.classList.remove('active'));
 
 modalTheme.addEventListener('click', (e) => {
   const btn = e.target.closest('.btn[data-theme]');
   if (!btn) return;
   chosenTheme = btn.getAttribute('data-theme');
   updatePreview();
-  closeModal(modalTheme);
+  modalTheme.classList.remove('active');
 });
-closeTheme.addEventListener('click', () => closeModal(modalTheme));
 
 modalPlayers.addEventListener('click', (e) => {
   const btn = e.target.closest('.btn[data-count]');
   if (!btn) return;
   playersCount = Number(btn.getAttribute('data-count'));
-  closeModal(modalPlayers);
+  modalPlayers.classList.remove('active');
 });
-closePlayers.addEventListener('click', () => closeModal(modalPlayers));
 
-// Eventos
-btnTheme.addEventListener('click', () => openModal(modalTheme));
-btnPlayers.add
-
+// Inicializar vista previa
+updatePreview();
