@@ -6,22 +6,9 @@
   <title>IMPOSTOR — Neon Game</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css"/>
-
-  <!-- Firebase compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
-  <!-- Pantalla de votación -->
-<section id="screenVotacion" class="screen">
-  <div class="card">
-    <h2 class="title neon-title">¿Quién fue el impostor?</h2>
-    <ul id="listaVotacion" class="player-list"></ul>
-    <div class="actions">
-      <button id="btnEnviarVoto" class="btn primary">Enviar voto</button>
-    </div>
-  </div>
-</section>
-
 <body>
   <div class="app-wrap">
     <!-- Pantalla de inicio -->
@@ -71,6 +58,17 @@
       </div>
     </section>
 
+    <!-- Pantalla de votación -->
+    <section id="screenVotacion" class="screen">
+      <div class="card">
+        <h2 class="title neon-title">¿Quién fue el impostor?</h2>
+        <ul id="listaVotacion" class="player-list"></ul>
+        <div class="actions">
+          <button id="btnEnviarVoto" class="btn primary">Enviar voto</button>
+        </div>
+      </div>
+    </section>
+
     <!-- Pantalla final -->
     <section id="screenFinal" class="screen">
       <div class="card">
@@ -85,4 +83,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
