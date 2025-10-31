@@ -124,8 +124,11 @@ async function iniciarPartida() {
     if (!posiciones.includes(r)) posiciones.push(r);
   }
 
-  const palabras = jugadores.map((_, i) => posiciones.includes(i) ? "IMPOSTOR" : THEMES['Cosas'][Math.floor(Math.random() * THEMES['Cosas'].length)]);
-  const impostoresNombres = posiciones.map(i => jugadores[i]);
+const palabraComun = THEMES['Cosas'][Math.floor(Math.random() * THEMES['Cosas'].length)];
+const palabras = jugadores.map((_, i) =>
+  posiciones.includes(i) ? "IMPOSTOR" : palabraComun
+);
+
 
   await salaRef.update({
     estado: "jugando",
@@ -232,6 +235,7 @@ btnUnirse.addEventListener('click', unirseASala);
 btnIniciar.addEventListener('click', iniciarPartida);
 btnTerminar.addEventListener('click', terminarJuego);
 btnVolver.addEventListener('click', volverInicio);
+
 
 
 
