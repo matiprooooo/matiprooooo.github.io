@@ -1,5 +1,4 @@
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyBsL05e0PrFEqNUE7XwytZgqOviIrFyYSY",
   authDomain: "impostorgame-5d7ee.firebaseapp.com",
@@ -15,69 +14,102 @@ const db = firebase.firestore();
 
 // Elementos del DOM
 const screenHome = document.getElementById('screenHome');
+const screenLobby = document.getElementById('screenLobby');
 const screenGame = document.getElementById('screenGame');
 const screenFinal = document.getElementById('screenFinal');
-const btnPlay = document.getElementById('btnPlay');
-const btnTheme = document.getElementById('btnTheme');
-const btnPlayers = document.getElementById('btnPlayers');
-const btnEndTurn = document.getElementById('btnEndTurn');
-const btnNewGame = document.getElementById('btnNewGame');
-const previewThemeName = document.getElementById('previewThemeName');
-const previewList = document.getElementById('previewList');
-const hudTheme = document.getElementById('hudTheme');
-const hudSala = document.getElementById('hudSala');
-const turnInfo = document.getElementById('turnInfo');
-const wordDisplay = document.getElementById('wordDisplay');
-const impostorBadge = document.getElementById('impostorBadge');
-const modalTheme = document.getElementById('modalTheme');
-const modalPlayers = document.getElementById('modalPlayers');
-const closeTheme = document.getElementById('closeTheme');
-const closePlayers = document.getElementById('closePlayers');
-const gameTitle = document.getElementById('gameTitle');
+const inputNombre = document.getElementById('inputNombre');
 const inputSala = document.getElementById('inputSala');
+const btnUnirse = document.getElementById('btnUnirse');
+const btnIniciar = document.getElementById('btnIniciar');
+const btnTerminar = document.getElementById('btnTerminar');
+const btnVolver = document.getElementById('btnVolver');
+const lobbySalaID = document.getElementById('lobbySalaID');
+const listaJugadores = document.getElementById('listaJugadores');
+const wordDisplay = document.getElementById('wordDisplay');
+const hudSala = document.getElementById('hudSala');
+const hudJugador = document.getElementById('hudJugador');
 
 // Estado del juego
 const THEMES = {
-  'Cosas': ['Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla','Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo'],
-  'Personas': ["EMI","Nachito(AYO)","SOLIS","EBERTZ","CABALLITO","SHOSHI","AGUSTINA","FRANCISCO","MARTIN","POLLO","BAHIANO","NICOLAU","NAHUE(EL MAMUEL)","JOACO DE PIEDRAS BLANCAS","LA COQUETA","BRANDON","LA ANA","FRASQUITO","AXEL(ÑAÑITO)","IBAI","EL MOMO","CRISTINA","CHIQUI TAPIA","DAVO","LA COBRA","GASTON EDUL","EL IVAN","LA YANI","LA SEÑO PAU(INGLES)","HEBER ZAPATA","BAULETTI","MERNUEL","BAULETTI","MATIAS BOTTERO","MILICA"],
-  'Futbolistas': ['Lionel Messi','Cristiano Ronaldo','Neymar','Kylian Mbappé','Erling Haaland','Kevin De Bruyne','Luka Modrić','Ángel Di María','Julián Álvarez','Paulo Dybala','Sergio Agüero','Ronaldinho','Zinedine Zidane','Andrés Iniesta','Xavi','Diego Maradona','Pelé','Francesco Totti','Didier Drogba','Wayne Rooney'],
-  'Cartas de Clash Royale': ['Gigante','Montapuercos','Mago','Horda de esbirros','Valquiria','P.E.K.K.A','Tronco','Bebé dragón','Megacaballero','Bruja','Globo','Minero','Princesa','Chispitas','Esqueleto gigante','Barril de duendes','Mosquetera','Arquero mágico','Rayo','Rage']
+  'Cosas': ['Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla','Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo']
 };
 
-let chosenTheme = 'Cosas';
-let playersCount = 4;
-let currentPlayer = 1;
+let nombreJugador = '';
 let salaID = '';
+let esCreador = false;
 let palabraMostrada = false;
 
 // Funciones de pantalla
 function setScreen(screen) {
-  [screenHome, screenGame, screenFinal].forEach(s => s.classList.remove('active'));
+  [screenHome, screenLobby, screenGame, screenFinal].forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
 }
 
-function updatePreview() {
-  previewThemeName.textContent = chosenTheme;
-  const list = THEMES[chosenTheme];
-  const sample = list.slice(0, 5);
-  previewList.innerHTML = sample.map(item => `<li>${item}</li>`).join('');
+// Unirse a sala
+async function unirseASala() {
+  nombreJugador = inputNombre.value.trim();
+  salaID = inputSala.value.trim().toUpperCase();
+
+  if (!nombreJugador || !salaID) return;
+
+  const salaRef = db.collection("salas").doc(salaID);
+  const doc = await salaRef.get();
+
+  if (!doc.exists) {
+    esCreador = true;
+    await salaRef.set({
+      creador: nombreJugador,
+      jugadores: [nombreJugador],
+      estado: "esperando"
+    });
+  } else {
+    const datos = doc.data();
+    const jugadores = datos.jugadores || [];
+    if (!jugadores.includes(nombreJugador)) {
+      jugadores.push(nombreJugador);
+      await salaRef.update({ jugadores });
+    }
+    esCreador = datos.creador === nombreJugador;
+  }
+
+  lobbySalaID.textContent = salaID;
+  hudSala.textContent = salaID;
+  hudJugador.textContent = nombreJugador;
+  setScreen(screenLobby);
+  escucharJugadores();
+  btnIniciar.style.display = esCreador ? 'inline-block' : 'none';
 }
 
-// Crear sala en Firestore
-async function crearSala(codigo, tema, cantidadJugadores) {
-  const palabras = asignarPalabras(tema, cantidadJugadores);
-  await db.collection("salas").doc(codigo).set({
-    tema,
-    jugadores: cantidadJugadores,
-    palabras,
-    turnoActual: 1,
-    estado: "jugando"
+// Escuchar jugadores conectados
+function escucharJugadores() {
+  db.collection("salas").doc(salaID).onSnapshot((doc) => {
+    const datos = doc.data();
+    const jugadores = datos.jugadores || [];
+    listaJugadores.innerHTML = jugadores.map(j => `<li>${j}</li>`).join('');
   });
 }
 
+// Iniciar partida (solo creador)
+async function iniciarPartida() {
+  const salaRef = db.collection("salas").doc(salaID);
+  const doc = await salaRef.get();
+  if (!doc.exists) return;
+
+  const datos = doc.data();
+  const jugadores = datos.jugadores || [];
+  const palabras = asignarPalabras(jugadores.length);
+
+  await salaRef.update({
+    estado: "jugando",
+    palabras
+  });
+
+  mostrarPalabra(jugadores);
+}
+
 // Asignar palabras e impostores
-function asignarPalabras(tema, cantidad) {
-  const lista = THEMES[tema];
+function asignarPalabras(cantidad) {
+  const lista = THEMES['Cosas'];
   const palabra = lista[Math.floor(Math.random() * lista.length)];
   const impostores = cantidad > 5 ? 2 : 1;
   const posiciones = [];
@@ -95,90 +127,33 @@ function asignarPalabras(tema, cantidad) {
   return resultado;
 }
 
-// Mostrar palabra del jugador actual (solo una vez)
-async function mostrarPalabra() {
+// Mostrar palabra del jugador actual
+async function mostrarPalabra(jugadores) {
   if (palabraMostrada) return;
 
+  const index = jugadores.indexOf(nombreJugador);
   const doc = await db.collection("salas").doc(salaID).get();
-  if (doc.exists) {
-    const datos = doc.data();
-    const palabra = datos.palabras[currentPlayer - 1];
-    wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
-    impostorBadge.style.display = palabra === "IMPOSTOR" ? "block" : "none";
-    turnInfo.textContent = `Jugador ${currentPlayer} de ${playersCount}`;
-    hudTheme.textContent = datos.tema;
-    hudSala.textContent = salaID;
-    palabraMostrada = true;
-  }
-}
+  const datos = doc.data();
+  const palabra = datos.palabras[index];
 
-// Avanzar turno y terminar si es el último
-async function avanzarTurno() {
-  const ref = db.collection("salas").doc(salaID);
-  const doc = await ref.get();
-  if (doc.exists) {
-    const datos = doc.data();
-    const siguiente = datos.turnoActual + 1;
-
-    if (siguiente > playersCount) {
-      setScreen(screenFinal);
-    } else {
-      await ref.update({ turnoActual: siguiente });
-      currentPlayer = siguiente;
-      palabraMostrada = false;
-      mostrarPalabra();
-    }
-  }
-}
-
-// Iniciar partida
-async function startGame() {
-  salaID = inputSala.value.trim().toUpperCase() || 'ABC123';
-  currentPlayer = 1;
-  palabraMostrada = false;
-  await crearSala(salaID, chosenTheme, playersCount);
+  wordDisplay.textContent = palabra === "IMPOSTOR" ? "—" : palabra;
+  palabraMostrada = true;
   setScreen(screenGame);
-  mostrarPalabra();
 }
 
-function endTurn() {
-  setScreen(screenHome);
+// Terminar juego
+function terminarJuego() {
+  setScreen(screenFinal);
 }
 
-
-
-// Volver al menú
-function resetToHome() {
+// Volver al inicio
+function volverInicio() {
   setScreen(screenHome);
+  palabraMostrada = false;
 }
 
 // Eventos
-btnPlay.addEventListener('click', startGame);
-btnEndTurn.addEventListener('click', endTurn);
-btnNewGame.addEventListener('click', resetToHome);
-gameTitle.addEventListener('click', resetToHome);
-
-btnTheme.addEventListener('click', () => modalTheme.classList.add('active'));
-btnPlayers.addEventListener('click', () => modalPlayers.classList.add('active'));
-closeTheme.addEventListener('click', () => modalTheme.classList.remove('active'));
-closePlayers.addEventListener('click', () => modalPlayers.classList.remove('active'));
-
-modalTheme.addEventListener('click', (e) => {
-  const btn = e.target.closest('.btn[data-theme]');
-  if (!btn) return;
-  chosenTheme = btn.getAttribute('data-theme');
-  updatePreview();
-  modalTheme.classList.remove('active');
-});
-
-modalPlayers.addEventListener('click', (e) => {
-  const btn = e.target.closest('.btn[data-count]');
-  if (!btn) return;
-  playersCount = Number(btn.getAttribute('data-count'));
-  modalPlayers.classList.remove('active');
-});
-
-// Inicializar vista previa
-updatePreview();
-
-
+btnUnirse.addEventListener('click', unirseASala);
+btnIniciar.addEventListener('click', iniciarPartida);
+btnTerminar.addEventListener('click', terminarJuego);
+btnVolver.addEventListener('click', volverInicio);
