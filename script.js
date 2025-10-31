@@ -229,4 +229,5 @@ function volverInicio() {
 
 // 🧷 Eventos
 btnUnirse.addEventListener('click', unirseASala);
-btnIniciar.addEventListener('click', iniciarPartida
+btnIniciar.addEventListener('click', iniciarPartida);
+
