@@ -28,7 +28,7 @@ const hudSala = document.getElementById('hudSala');
 const hudJugador = document.getElementById('hudJugador');
 
 const THEMES = {
-  'Cosas': ['Lámpara','Teclado','Puerta','Cámara','Auriculares','Bicicleta','Cuchillo','Libro','Reloj','Silla','Ventana','Mesa','Botella','Llave','Plancha','Cargador','Pelota','Cepillo','Espejo','Martillo']
+  'Cosas': ['Eber','Matias','Emi','Pollo','Auriculares','Shoshi','Martin','elmomo','Nacho','Bananero','Agustina','Bahiano','Ñañin','Shani','Plancha','Heber','','Cepillo','Espejo','Martillo']
 };
 
 let nombreJugador = '';
