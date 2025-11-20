@@ -28,7 +28,7 @@ const hudSala = document.getElementById('hudSala');
 const hudJugador = document.getElementById('hudJugador');
 
 const THEMES = {
-  'Cosas': ['Eber','Matias','Emi','Pollo','Auriculares','Shoshi','Martin','elmomo','Nacho','Bananero','Agustina','Bahiano','Ñañin','Shani','ronaldo','Heber','','Caballito','Rami','Davo''Eber','Matias nicolau','Emi','sambrenil','santino','Rayo mqueen','luchi','frankaster','coscu','teodelia','fran','mr popo','willyrex','Goku','Dracula','Dani fabri','','Agusneta','La coqueta','Bananero']
+  'Cosas': ['Eber','Matias','Emi','Pollo','Auriculares','Shoshi','Martin','elmomo','Nacho','Bananero','Agustina','Bahiano','Ñañin','Shani','ronaldo','Heber','','Caballito','Rami','Davo''Eber','Matias nicolau','Emi','sambrenil','santino','Rayo mqueen','luchi','frankaster','coscu','teodelia','fran','mr popo','willyrex','Goku','Dracula','Dani fabri','Agusneta','La coqueta','Bananero']
 };
 
 let nombreJugador = '';
