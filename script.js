@@ -2,7 +2,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBsL05e0PrFEqNUE7XwytZgqOviIrFyYSY",
   authDomain: "impostorgame-5d7ee.firebaseapp.com",
   projectId: "impostorgame-5d7ee",
-  storageBucket: "impostorgame-5d7ee.firebasestorage.app",
+  storageBucket: "impostorgame-5d7ee.appspot.com",   // ← CORREGIDO
   messagingSenderId: "90706939619",
   appId: "1:90706939619:web:cc9024682ef966ad68ffd6",
   measurementId: "G-PYEP3HE6XW"
@@ -28,7 +28,14 @@ const hudSala = document.getElementById('hudSala');
 const hudJugador = document.getElementById('hudJugador');
 
 const THEMES = {
-  'Cosas': ['Eber','Matias','Emi','Pollo','Lore','Shoshi','Martin','elmomo','Nacho','Bananero','Agustina','Bahiano','Ñañin','Shani','ronaldo','Heber','Caballito','Rami','Davo','Eber','Matiasnicolau','Emi','sambrenil','santino','Rayo mqueen','luchi','frankaster','coscu','teodelia','fran','mr popo','willyrex','Goku','Dracula','Dani fabri','Agusneta','La coqueta','Bananero']
+  'Cosas': [
+    'Eber','Matias','Emi','Pollo','Lore','Shoshi','Martin','elmomo','Nacho',
+    'Bananero','Agustina','Bahiano','Ñañin','Shani','ronaldo','Heber',
+    'Caballito','Rami','Davo','Matiasnicolau','sambrenil','santino',
+    'Rayo mqueen','luchi','frankaster','coscu','teodelia','fran',
+    'mr popo','willyrex','Goku','Dracula','Dani fabri','Agusneta',
+    'La coqueta'
+  ]
 };
 
 let nombreJugador = '';
@@ -68,9 +75,10 @@ async function unirseASala() {
     esCreador = datos.creador === nombreJugador;
   }
 
-  // Presencia
+  // Presencia mínima
   const presenciaRef = salaRef.collection("presencia").doc(nombreJugador);
   await presenciaRef.set({ activo: true });
+
   window.addEventListener("beforeunload", () => {
     presenciaRef.delete();
   });
@@ -79,6 +87,7 @@ async function unirseASala() {
   hudSala.textContent = salaID;
   hudJugador.textContent = nombreJugador;
   setScreen(screenLobby);
+
   escucharSala();
   escucharPresencia();
   btnIniciar.style.display = esCreador ? 'inline-block' : 'none';
@@ -87,16 +96,26 @@ async function unirseASala() {
 // 👂 Escuchar sala
 function escucharSala() {
   db.collection("salas").doc(salaID).onSnapshot((doc) => {
+    if (!doc.exists) return;
+
     const datos = doc.data();
     const jugadores = datos.jugadores || [];
-    listaJugadores.innerHTML = jugadores.map(j => `<li>${j}</li>`).join('');
+
+    listaJugadores.innerHTML =
+      jugadores.map(j => `<li>${j}</li>`).join('');
 
     if (datos.estado === "jugando" && datos.palabras && !palabraMostrada) {
       const index = jugadores.indexOf(nombreJugador);
       if (index === -1) return;
+
       const palabra = datos.palabras[index];
       wordDisplay.textContent = palabra;
-      wordDisplay.classList.toggle("impostor", palabra === "IMPOSTOR");
+
+      if (palabra === "IMPOSTOR")
+        wordDisplay.classList.add("impostor");
+      else
+        wordDisplay.classList.remove("impostor");
+
       palabraMostrada = true;
       setScreen(screenGame);
     }
@@ -106,10 +125,13 @@ function escucharSala() {
 // 👥 Escuchar presencia
 function escucharPresencia() {
   const salaRef = db.collection("salas").doc(salaID);
+
   salaRef.collection("presencia").onSnapshot(async (snapshot) => {
     const activos = snapshot.docs.map(doc => doc.id);
+
+    // si no hay nadie, borrar sala
     if (activos.length === 0) {
-      await salaRef.delete();
+      try { await salaRef.delete(); } catch (e) {}
     }
   });
 }
@@ -120,6 +142,7 @@ async function iniciarPartida() {
   const doc = await salaRef.get();
   const datos = doc.data();
   const jugadores = datos.jugadores || [];
+
   const cantidad = jugadores.length;
   const impostores = cantidad > 5 ? 2 : 1;
   const posiciones = [];
@@ -129,7 +152,9 @@ async function iniciarPartida() {
     if (!posiciones.includes(r)) posiciones.push(r);
   }
 
-  const palabraComun = THEMES['Cosas'][Math.floor(Math.random() * THEMES['Cosas'].length)];
+  const palabraComun =
+    THEMES['Cosas'][Math.floor(Math.random() * THEMES['Cosas'].length)];
+
   const palabras = jugadores.map((_, i) =>
     posiciones.includes(i) ? "IMPOSTOR" : palabraComun
   );
@@ -143,7 +168,9 @@ async function iniciarPartida() {
 // 🔁 Volver al inicio
 btnVolver.addEventListener('click', async () => {
   if (esCreador && salaID) {
-    await db.collection("salas").doc(salaID).delete();
+    try {
+      await db.collection("salas").doc(salaID).delete();
+    } catch (e) {}
   }
   setScreen(screenHome);
   palabraMostrada = false;
